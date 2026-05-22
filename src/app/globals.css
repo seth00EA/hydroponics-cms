@@ -1,0 +1,41 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f7faf8;
+  --foreground: #1a2e1f;
+  --card: #ffffff;
+  --card-border: #d4e5d8;
+  --primary: #2d6a4f;
+  --primary-hover: #1b4332;
+  --primary-light: #d8f3dc;
+  --secondary: #40916c;
+  --accent: #95d5b2;
+  --muted: #52796f;
+  --muted-bg: #edf5ef;
+  --admin-sidebar: #1b4332;
+  --admin-sidebar-text: #d8f3dc;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-border: var(--card-border);
+  --color-primary: var(--primary);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-light: var(--primary-light);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-muted: var(--muted);
+  --color-muted-bg: var(--muted-bg);
+  --color-admin-sidebar: var(--admin-sidebar);
+  --color-admin-sidebar-text: var(--admin-sidebar-text);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+}
