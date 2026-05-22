@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { signOutAction } from "@/app/admin/actions/auth";
 import { useAdminSession } from "@/components/admin/AdminProvider";
 import { getAdminNavForRole } from "@/lib/auth/nav";
 import { siteConfig } from "@/data/site";
@@ -53,6 +54,7 @@ export function AdminSidebar() {
           )}
         </Link>
       </div>
+
       <nav className="flex-1 space-y-1 p-3">
         {navLinks.map((link) => (
           <Link
@@ -85,7 +87,8 @@ export function AdminSidebar() {
           </Link>
         ))}
       </nav>
-      <div className="space-y-2 border-t border-white/10 p-4">
+
+      <div className="space-y-3 border-t border-white/10 p-4">
         <Link
           href="/"
           className="flex items-center gap-2 text-sm text-accent hover:text-white"
@@ -93,8 +96,20 @@ export function AdminSidebar() {
           <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
           </svg>
-          View public site
+          Back to Website
         </Link>
+
+        <form action={signOutAction}>
+          <button
+            type="submit"
+            className="flex w-full items-center gap-2 rounded-lg px-0 py-1 text-left text-sm text-admin-sidebar-text/80 hover:text-white"
+          >
+            <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden>
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H9m4 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+            </svg>
+            Logout
+          </button>
+        </form>
       </div>
     </aside>
   );

@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { AdminLoginForm } from "@/components/admin/AdminLoginForm";
 import { Card } from "@/components/ui/Card";
 import { siteConfig } from "@/data/site";
-import { ownerExists } from "@/lib/auth/session";
+import { getAuthSession, ownerExists } from "@/lib/auth/session";
+import { canAccessAdmin } from "@/lib/auth/permissions";
 import { isSupabaseConfigured } from "@/lib/supabase";
 
 export const metadata = {
@@ -13,8 +14,17 @@ export const metadata = {
 
 export default async function AdminLoginPage() {
   const supabaseEnabled = isSupabaseConfigured();
-  if (supabaseEnabled && !(await ownerExists())) {
-    redirect("/admin/setup");
+
+  if (supabaseEnabled) {
+    const session = await getAuthSession();
+
+    if (session && canAccessAdmin(session.profile.role)) {
+      redirect("/admin/dashboard");
+    }
+
+    if (!(await ownerExists())) {
+      redirect("/admin/setup");
+    }
   }
 
   return (
@@ -29,17 +39,16 @@ export default async function AdminLoginPage() {
         <p className="mt-1 text-sm text-muted">
           {siteConfig.name} content management
         </p>
+        <Link href="/" className="mt-3 inline-block text-sm text-primary hover:underline">
+          Back to Website
+        </Link>
       </div>
+
       <Card>
-        <Suspense fallback={<p className="text-sm text-muted">Loading…</p>}>
+        <Suspense fallback={<p className="text-sm text-muted">Loading...</p>}>
           <AdminLoginForm supabaseEnabled={supabaseEnabled} />
         </Suspense>
       </Card>
-      <p className="mt-6 text-center text-sm text-muted">
-        <Link href="/" className="text-primary hover:underline">
-          ← Back to website
-        </Link>
-      </p>
     </div>
   );
 }
