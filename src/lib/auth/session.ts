@@ -1,4 +1,5 @@
 import { createServerSupabaseClient, isSupabaseConfigured } from "@/lib/supabase";
+import { createAdminClient } from "@/lib/supabase/admin";
 import type { AuthSession, Profile, UserRole } from "@/types/auth";
 
 function mapProfile(row: {
@@ -48,7 +49,8 @@ export async function getAuthSession(): Promise<AuthSession | null> {
 export async function ownerExists(): Promise<boolean> {
   if (!isSupabaseConfigured()) return false;
 
-  const supabase = await createServerSupabaseClient();
+  const admin = createAdminClient();
+  const supabase = admin ?? (await createServerSupabaseClient());
   if (!supabase) return false;
 
   const { count, error } = await supabase

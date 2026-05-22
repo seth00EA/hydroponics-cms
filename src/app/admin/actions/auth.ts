@@ -56,7 +56,33 @@ export async function signOutAction() {
   if (supabase) await supabase.auth.signOut();
   redirect("/admin/login");
 }
+export async function forgotPasswordAction(
+  _prev: AuthActionResult,
+  formData: FormData,
+): Promise<AuthActionResult> {
+  if (!isSupabaseConfigured()) {
+    return { error: "Supabase is not configured." };
+  }
 
+  const email = String(formData.get("email") ?? "").trim();
+
+  if (!email) {
+    return { error: "Email is required." };
+  }
+
+  const supabase = await createServerSupabaseClient();
+  if (!supabase) return { error: "Could not connect to Supabase." };
+
+  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000"}/admin/login`,
+  });
+
+  if (error) return { error: error.message };
+
+  return {
+    success: "Password reset email sent. Please check your inbox.",
+  };
+}
 export async function setupOwnerAction(
   _prev: AuthActionResult,
   formData: FormData,
@@ -71,10 +97,15 @@ export async function setupOwnerAction(
 
   const email = String(formData.get("email") ?? "").trim();
   const password = String(formData.get("password") ?? "");
+  const confirmPassword = String(formData.get("confirm_password") ?? "");
   const fullName = String(formData.get("full_name") ?? "").trim();
-
-  if (!email || !password || password.length < 8) {
+  
+  if (!email || !fullName || !password || password.length < 8) {
     return { error: "Email, name, and password (min 8 characters) are required." };
+  }
+  
+  if (password !== confirmPassword) {
+    return { error: "Password and confirm password do not match." };
   }
 
   const admin = createAdminClient();
