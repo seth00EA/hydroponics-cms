@@ -1,19 +1,16 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { submitOrderAction } from "@/app/(public)/checkout/actions";
 import { useState } from "react";
 
 export default function CheckoutForm() {
-  const router = useRouter();
-  const [paymentMethod, setPaymentMethod] = useState("Cash on delivery");
+    const [paymentMethod, setPaymentMethod] = useState("Cash on delivery");
 
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    router.push("/order-success");
-  }
+  const demoCartItems = JSON.stringify([]);
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 rounded-2xl border bg-white p-6 shadow-sm">
+      <form action={submitOrderAction} className="space-y-5 rounded-2xl border bg-white p-6 shadow-sm">
+          <input type="hidden" name="cart_items" value={demoCartItems} />
       <div>
         <label className="text-sm font-medium">Full Name</label>
         <input name="full_name" required className="mt-1 w-full rounded-lg border p-3" />
@@ -67,3 +64,4 @@ export default function CheckoutForm() {
     </form>
   );
 }
+
