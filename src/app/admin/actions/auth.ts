@@ -258,3 +258,138 @@ export async function removeStaffAction(userId: string): Promise<AuthActionResul
   revalidatePath("/admin/staff");
   return { success: "Staff account removed." };
 }
+
+export async function deleteAdminAccountAction(userId: string): Promise<AuthActionResult> {
+  const session = await getAuthSession();
+
+  if (!session || !canManageStaff(session.profile.role)) {
+    return { error: "Only the owner can delete admin accounts." };
+  }
+
+  if (userId === session.userId) {
+    return { error: "You cannot delete your own logged-in owner account." };
+  }
+
+  const admin = createAdminClient();
+  if (!admin) return { error: "Service role key required." };
+
+  const { data: target, error: targetError } = await admin
+    .from("profiles")
+    .select("id, role")
+    .eq("id", userId)
+    .single();
+
+  if (targetError || !target) {
+    return { error: "Account not found." };
+  }
+
+  if (target.role !== "owner" && target.role !== "staff") {
+    return { error: "Only owner or staff accounts can be deleted here." };
+  }
+
+  if (target.role === "owner") {
+    const { count, error: countError } = await admin
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "owner");
+
+    if (countError) return { error: countError.message };
+
+    if ((count ?? 0) <= 1) {
+      return { error: "You cannot delete the last remaining owner account." };
+    }
+  }
+
+  const { error } = await admin.auth.admin.deleteUser(userId);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/users");
+  revalidatePath("/admin/staff");
+
+  return { success: "Admin account deleted." };
+}
+
+export async function disableAdminAccountAction(userId: string): Promise<AuthActionResult> {
+  const session = await getAuthSession();
+
+  if (!session || !canManageStaff(session.profile.role)) {
+    return { error: "Only the owner can disable admin accounts." };
+  }
+
+  if (userId === session.userId) {
+    return { error: "You cannot disable your own logged-in owner account." };
+  }
+
+  const admin = createAdminClient();
+  if (!admin) return { error: "Service role key required." };
+
+  const { data: target, error: targetError } = await admin
+    .from("profiles")
+    .select("id, role")
+    .eq("id", userId)
+    .single();
+
+  if (targetError || !target) {
+    return { error: "Account not found." };
+  }
+
+  if (target.role === "owner") {
+    const { count, error: countError } = await admin
+      .from("profiles")
+      .select("id", { count: "exact", head: true })
+      .eq("role", "owner");
+
+    if (countError) return { error: countError.message };
+
+    if ((count ?? 0) <= 1) {
+      return { error: "You cannot disable the last remaining owner account." };
+    }
+  }
+
+  const { error } = await admin.auth.admin.updateUserById(userId, {
+    ban_duration: "876000h",
+  });
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/admin/users");
+
+  return { success: "Admin account disabled." };
+}
+
+export async function resetStaffPasswordAction(
+  userId: string,
+  formData: FormData,
+): Promise<void> {
+  const session = await getAuthSession();
+
+  if (!session || !canManageStaff(session.profile.role)) {
+    return;
+  }
+
+  const password = String(formData.get("password") ?? "");
+
+  if (password.length < 8) {
+    return;
+  }
+
+  const admin = createAdminClient();
+  if (!admin) return;
+
+  const { data: target } = await admin
+    .from("profiles")
+    .select("role")
+    .eq("id", userId)
+    .single();
+
+  if (target?.role !== "staff") {
+    return;
+  }
+
+  await admin.auth.admin.updateUserById(userId, {
+    password,
+  });
+
+  revalidatePath("/admin/users");
+}
