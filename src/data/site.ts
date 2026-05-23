@@ -19,6 +19,7 @@ export const adminNavLinks = [
   { label: "Dashboard", href: "/admin/dashboard", description: "Overview" },
   { label: "Homepage", href: "/admin/homepage", description: "Hero & about" },
   { label: "Products", href: "/admin/products", description: "Catalog" },
+  { label: "Orders", href: "/admin/orders", description: "Customer orders" },
   { label: "Gallery", href: "/admin/gallery", description: "Photos" },
   { label: "Contact", href: "/admin/contact", description: "Business info" },
 ] as const;
