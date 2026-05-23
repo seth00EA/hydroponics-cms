@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import { addToCart } from "@/lib/cart";
 import type { Product } from "@/types";
 import { AvailabilityBadge } from "@/components/products/AvailabilityBadge";
@@ -11,9 +12,11 @@ import { cn } from "@/lib/cn";
 type ProductCardProps = {
   product: Product;
   className?: string;
+  onCartChange?: () => void;
 };
 
-export function ProductCard({ product, className }: ProductCardProps) {
+export function ProductCard({ product, className, onCartChange }: ProductCardProps) {
+  const [quantity, setQuantity] = useState(1);
   const unavailable = !product.is_available || product.stock_quantity <= 0;
 
   const isRemoteImage =
@@ -24,11 +27,12 @@ export function ProductCard({ product, className }: ProductCardProps) {
     addToCart({
       product_id: product.id,
       product_name: product.name,
-      quantity: 1,
+      quantity,
       unit_price: product.price,
     });
 
-    alert(`${product.name} added to cart`);
+    onCartChange?.();
+    alert(`${quantity} ${product.name} added to cart`);
   }
 
   return (
@@ -45,10 +49,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
           src={product.image_url}
           alt={product.name}
           fill
-          className={cn(
-            "object-cover p-6",
-            unavailable && "grayscale-[30%]",
-          )}
+          className={cn("object-cover p-6", unavailable && "grayscale-[30%]")}
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
           unoptimized={isRemoteImage}
         />
@@ -67,29 +68,49 @@ export function ProductCard({ product, className }: ProductCardProps) {
           {product.category}
         </p>
 
-        <h3 className="mt-1 text-lg font-semibold text-foreground">
-          {product.name}
-        </h3>
+        <h3 className="mt-1 text-lg font-semibold text-foreground">{product.name}</h3>
 
         <p className="mt-2 flex-1 text-sm leading-relaxed text-muted line-clamp-3">
           {product.description}
         </p>
 
-        <div className="mt-4 flex items-end justify-between gap-2 border-t border-card-border pt-4">
-          <p className="text-xl font-bold text-primary">
-            ${product.price.toFixed(2)}
-          </p>
+        <div className="mt-4 border-t border-card-border pt-4">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-xl font-bold text-primary">
+              ?{product.price.toFixed(2)}
+            </p>
 
-          {unavailable ? (
-            <span className="text-xs font-medium text-muted">Unavailable</span>
-          ) : (
-            <button
-              type="button"
-              onClick={handleAddToCart}
-              className="rounded-lg bg-green-700 px-3 py-2 text-xs font-semibold text-white hover:bg-green-800"
-            >
-              Add to Cart
-            </button>
+            {unavailable ? (
+              <span className="text-xs font-medium text-muted">Unavailable</span>
+            ) : (
+              <span className="text-xs font-medium text-primary">
+                {product.stock_quantity} in stock
+              </span>
+            )}
+          </div>
+
+          {!unavailable && (
+            <div className="mt-4 flex items-center gap-3">
+              <input
+                type="number"
+                min={1}
+                max={product.stock_quantity}
+                value={quantity}
+                onChange={(event) => {
+                  const value = Number(event.target.value);
+                  setQuantity(Math.min(Math.max(value, 1), product.stock_quantity));
+                }}
+                className="w-20 rounded-lg border px-3 py-2 text-center text-sm"
+              />
+
+              <button
+                type="button"
+                onClick={handleAddToCart}
+                className="flex-1 rounded-lg bg-green-700 px-3 py-2 text-sm font-semibold text-white hover:bg-green-800"
+              >
+                Add to Cart
+              </button>
+            </div>
           )}
         </div>
       </div>
