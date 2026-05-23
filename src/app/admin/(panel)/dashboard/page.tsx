@@ -7,6 +7,7 @@ import { adminDashboardContent } from "@/data/admin";
 import { adminNavLinks } from "@/data/site";
 import { galleryItems } from "@/data/gallery";
 import { getProducts } from "@/lib/products/get-products";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 export const metadata = {
   title: "Dashboard",
@@ -18,6 +19,33 @@ export default async function AdminDashboardPage() {
   const lowStock = products.filter((p) => p.availability === "low_stock").length;
   const featured = products.filter((p) => p.is_featured).length;
 
+  const admin = createAdminClient() as any;
+
+  const { count: totalOrders } = admin
+    ? await admin.from("orders").select("id", { count: "exact", head: true })
+    : { count: 0 };
+
+  const { count: pendingOrders } = admin
+    ? await admin
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "pending")
+    : { count: 0 };
+
+  const { count: completedOrders } = admin
+    ? await admin
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "completed")
+    : { count: 0 };
+
+  const { count: cancelledOrders } = admin
+    ? await admin
+        .from("orders")
+        .select("id", { count: "exact", head: true })
+        .eq("status", "cancelled")
+    : { count: 0 };
+
   return (
     <AdminPageShell
       title={adminDashboardContent.welcome}
@@ -27,16 +55,64 @@ export default async function AdminDashboardPage() {
 
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <AdminStatCard
+          label="Total orders"
+          value={totalOrders ?? 0}
+          hint="All customer orders"
+          trend={`${pendingOrders ?? 0} pending`}
+          icon={
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6M5 7h14M5 7a2 2 0 012-2h10a2 2 0 012 2M5 7v12a2 2 0 002 2h10a2 2 0 002-2V7" />
+            </svg>
+          }
+        />
+
+        <AdminStatCard
+          label="Pending orders"
+          value={pendingOrders ?? 0}
+          hint="Need review"
+          icon={
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6l4 2m6-2a10 10 0 11-20 0 10 10 0 0120 0z" />
+            </svg>
+          }
+        />
+
+        <AdminStatCard
+          label="Completed orders"
+          value={completedOrders ?? 0}
+          hint="Successfully fulfilled"
+          icon={
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
+            </svg>
+          }
+        />
+
+        <AdminStatCard
+          label="Cancelled orders"
+          value={cancelledOrders ?? 0}
+          hint="Cancelled requests"
+          icon={
+            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          }
+        />
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <AdminStatCard
           label="Total products"
           value={products.length}
           hint="In catalog"
-          trend={`${inStock} in stock · ${lowStock} low`}
+          trend={`${inStock} in stock - ${lowStock} low`}
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
             </svg>
           }
         />
+
         <AdminStatCard
           label="Gallery images"
           value={galleryItems.length}
@@ -47,6 +123,7 @@ export default async function AdminDashboardPage() {
             </svg>
           }
         />
+
         <AdminStatCard
           label="Featured products"
           value={featured}
@@ -57,10 +134,11 @@ export default async function AdminDashboardPage() {
             </svg>
           }
         />
+
         <AdminStatCard
           label="CMS sections"
           value={adminNavLinks.length - 1}
-          hint="Homepage, products, gallery, contact"
+          hint="Homepage, products, orders, gallery, contact"
           icon={
             <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -77,6 +155,7 @@ export default async function AdminDashboardPage() {
           <CardDescription className="mb-4">
             Jump directly to an editor.
           </CardDescription>
+
           <ul className="space-y-2">
             {adminNavLinks
               .filter((l) => l.href !== "/admin/dashboard")
@@ -92,7 +171,7 @@ export default async function AdminDashboardPage() {
                         {link.description}
                       </span>
                     </span>
-                    <span className="text-primary">→</span>
+                    <span className="text-primary">View</span>
                   </Link>
                 </li>
               ))}
@@ -102,29 +181,37 @@ export default async function AdminDashboardPage() {
         <Card>
           <CardTitle>Inventory snapshot</CardTitle>
           <CardDescription className="mb-4">
-            Availability from static product data.
+            Availability from product data.
           </CardDescription>
+
           <ul className="space-y-3 text-sm">
             <li className="flex justify-between border-b border-card-border pb-2">
               <span className="text-muted">In stock</span>
               <span className="font-semibold text-foreground">{inStock}</span>
             </li>
+
             <li className="flex justify-between border-b border-card-border pb-2">
               <span className="text-muted">Low stock</span>
               <span className="font-semibold text-amber-700">{lowStock}</span>
             </li>
+
             <li className="flex justify-between">
               <span className="text-muted">Out of stock</span>
               <span className="font-semibold text-foreground">
-                {products.filter((p) => p.availability === "out_of_stock" || !p.is_available).length}
+                {
+                  products.filter(
+                    (p) => p.availability === "out_of_stock" || !p.is_available,
+                  ).length
+                }
               </span>
             </li>
           </ul>
+
           <Link
             href="/admin/products"
             className="mt-4 inline-block text-sm font-medium text-primary hover:underline"
           >
-            Manage products →
+            Manage products
           </Link>
         </Card>
       </div>
