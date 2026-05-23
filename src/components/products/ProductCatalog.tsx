@@ -53,7 +53,22 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
           href="/cart"
           className="shrink-0 rounded-xl bg-green-700 px-5 py-3 text-center font-semibold text-white hover:bg-green-800"
         >
-          ?? Cart ({cartCount})
+                  <span className="flex items-center gap-2">
+                      <svg
+                          className="h-5 w-5"
+                          fill="none"
+                          viewBox="0 0 24 24"
+                          stroke="currentColor"
+                      >
+                          <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1 5h12M10 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"
+                          />
+                      </svg>
+                      Cart ({cartCount})
+                 </span>
         </Link>
       </div>
 

@@ -77,7 +77,7 @@ export function ProductCard({ product, className, onCartChange }: ProductCardPro
         <div className="mt-4 border-t border-card-border pt-4">
           <div className="flex items-center justify-between gap-2">
             <p className="text-xl font-bold text-primary">
-              ?{product.price.toFixed(2)}
+            ₱{product.price.toFixed(2)}
             </p>
 
             {unavailable ? (
