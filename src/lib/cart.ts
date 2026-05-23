@@ -11,9 +11,9 @@ export function getStoredCart(): StoredCartItem[] {
   if (typeof window === "undefined") return [];
 
   try {
-    const rawCart = window.localStorage.getItem(CART_STORAGE_KEY);
-    if (!rawCart) return [];
-    return JSON.parse(rawCart) as StoredCartItem[];
+    const raw = window.localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return [];
+    return JSON.parse(raw) as StoredCartItem[];
   } catch {
     return [];
   }
@@ -27,4 +27,37 @@ export function saveStoredCart(items: StoredCartItem[]) {
 export function clearStoredCart() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(CART_STORAGE_KEY);
+}
+
+export function addToCart(item: StoredCartItem) {
+  const cart = getStoredCart();
+  const existing = cart.find((p) => p.product_id === item.product_id);
+
+  if (existing) {
+    existing.quantity += item.quantity;
+  } else {
+    cart.push(item);
+  }
+
+  saveStoredCart(cart);
+}
+
+export function removeFromCart(productId: string) {
+  const cart = getStoredCart().filter((item) => item.product_id !== productId);
+  saveStoredCart(cart);
+}
+
+export function updateCartQuantity(productId: string, quantity: number) {
+  const cart = getStoredCart();
+
+  const item = cart.find((p) => p.product_id === productId);
+  if (!item) return;
+
+  if (quantity <= 0) {
+    removeFromCart(productId);
+    return;
+  }
+
+  item.quantity = quantity;
+  saveStoredCart(cart);
 }
