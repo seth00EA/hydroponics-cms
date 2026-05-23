@@ -6,7 +6,7 @@ import { useState } from "react";
 export default function CheckoutForm() {
     const [paymentMethod, setPaymentMethod] = useState("Cash on delivery");
 
-  const demoCartItems = JSON.stringify([]);
+    const demoCartItems = JSON.stringify([]);
 
   return (
       <form action={submitOrderAction} className="space-y-5 rounded-2xl border bg-white p-6 shadow-sm">
@@ -53,7 +53,7 @@ export default function CheckoutForm() {
 
       {paymentMethod !== "Cash on delivery" && (
         <div>
-          <label className="text-sm font-medium">Proof of Payment Image Optional</label>
+          <label className="text-sm font-medium">Proof of Payment Image Optional</label>a
           <input name="proof_of_payment" type="file" accept="image/*" className="mt-1 w-full rounded-lg border p-3" />
         </div>
       )}
