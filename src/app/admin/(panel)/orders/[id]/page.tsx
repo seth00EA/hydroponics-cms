@@ -1,10 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { updateOrderStatusAction } from "@/app/admin/orders/actions";
+import { OrderStatusForm } from "@/components/admin/OrderStatusForm";
 import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { createAdminClient } from "@/lib/supabase/admin";
-
 const statuses = ["pending", "confirmed", "preparing", "ready", "completed", "cancelled"];
 
 export const metadata = {
@@ -70,19 +69,11 @@ export default async function AdminOrderDetailsPage({
               <p className="text-muted">No proof of payment uploaded.</p>
             )}
 
-            <form action={updateOrderStatusAction.bind(null, order.id)} className="flex gap-2">
-              <select name="status" defaultValue={order.status} className="rounded-lg border px-3 py-2">
-                {statuses.map((status) => (
-                  <option key={status} value={status}>{status}</option>
-                ))}
-              </select>
-                <button
-                 type="submit"
-                   className="rounded-lg bg-primary px-4 py-2 font-medium text-white hover:opacity-90"
-                  >
-                   Update Status
-               </button>             
-            </form>
+           <OrderStatusForm
+           orderId={order.id}
+           currentStatus={order.status}
+            statuses={statuses}
+             />
           </div>
         </Card>
       </div>

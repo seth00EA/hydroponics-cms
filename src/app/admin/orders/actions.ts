@@ -5,25 +5,34 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { getAuthSession } from "@/lib/auth/session";
 import { canAccessAdmin } from "@/lib/auth/permissions";
 
+export type OrderStatusActionState = {
+  error?: string;
+  success?: string;
+};
+
 const allowedStatuses = ["pending", "confirmed", "preparing", "ready", "completed", "cancelled"];
 
-export async function updateOrderStatusAction(orderId: string, formData: FormData): Promise<void> {
+export async function updateOrderStatusAction(
+  orderId: string,
+  _prev: OrderStatusActionState,
+  formData: FormData,
+): Promise<OrderStatusActionState> {
   const session = await getAuthSession();
 
   if (!session || !canAccessAdmin(session.profile.role)) {
-    return;
+    return { error: "You do not have permission to update orders." };
   }
 
   const status = String(formData.get("status") ?? "");
 
   if (!allowedStatuses.includes(status)) {
-    return;
+    return { error: "Invalid order status." };
   }
 
   const admin = createAdminClient() as any;
-  if (!admin) return;
+  if (!admin) return { error: "Service role key required." };
 
-  await admin
+  const { error } = await admin
     .from("orders")
     .update({
       status,
@@ -31,7 +40,13 @@ export async function updateOrderStatusAction(orderId: string, formData: FormDat
     })
     .eq("id", orderId);
 
+  if (error) {
+    return { error: error.message };
+  }
+
   revalidatePath("/admin/orders");
   revalidatePath(`/admin/orders/${orderId}`);
   revalidatePath("/admin/dashboard");
+
+  return { success: `Order status updated to ${status}.` };
 }
