@@ -40,7 +40,7 @@ export default async function AdminOrderDetailsPage({
       description="View customer information, ordered products, and update status."
     >
       <Link href="/admin/orders" className="text-sm font-medium text-primary hover:underline">
-        ? Back to Orders
+        ← Back to Orders
       </Link>
 
       <div className="grid gap-6 lg:grid-cols-2">
@@ -59,7 +59,7 @@ export default async function AdminOrderDetailsPage({
           <CardTitle>Payment & Status</CardTitle>
           <div className="mt-4 space-y-3 text-sm">
             <p><strong>Payment:</strong> {order.payment_method}</p>
-            <p><strong>Total:</strong> ?{Number(order.total_amount).toFixed(2)}</p>
+            <p><strong>Total:</strong> PHP {Number(order.total_amount).toFixed(2)}</p>
             <p><strong>Status:</strong> <span className="capitalize">{order.status}</span></p>
 
             {order.proof_of_payment_url ? (
@@ -76,9 +76,12 @@ export default async function AdminOrderDetailsPage({
                   <option key={status} value={status}>{status}</option>
                 ))}
               </select>
-              <button type="submit" className="rounded-lg bg-primary px-4 py-2 font-medium text-white">
-                Update
-              </button>
+                <button
+                 type="submit"
+                   className="rounded-lg bg-primary px-4 py-2 font-medium text-white hover:opacity-90"
+                  >
+                   Update Status
+               </button>             
             </form>
           </div>
         </Card>
@@ -101,8 +104,8 @@ export default async function AdminOrderDetailsPage({
                 <tr key={item.id}>
                   <td className="py-3 pr-4 font-medium">{item.product_name}</td>
                   <td className="py-3 pr-4">{item.quantity}</td>
-                  <td className="py-3 pr-4">?{Number(item.unit_price).toFixed(2)}</td>
-                  <td className="py-3">?{Number(item.subtotal).toFixed(2)}</td>
+                  <td className="py-3 pr-4">PHP {Number(item.unit_price).toFixed(2)}</td>
+                  <td className="py-3">PHP {Number(item.subtotal).toFixed(2)}</td>
                 </tr>
               ))}
             </tbody>
