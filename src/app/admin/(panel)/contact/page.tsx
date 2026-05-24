@@ -1,6 +1,7 @@
 import { AdminPageNotice, AdminPageShell } from "@/components/admin/AdminPageShell";
 import { ContactSettingsForm } from "@/components/admin/ContactSettingsForm";
 import { requireOwnerForContact } from "@/lib/auth/guards";
+import { getContactSettings } from "@/lib/contact";
 
 export const metadata = {
   title: "Manage Contact",
@@ -8,6 +9,7 @@ export const metadata = {
 
 export default async function AdminContactPage() {
   await requireOwnerForContact();
+  const settings = await getContactSettings();
 
   return (
     <AdminPageShell
@@ -15,7 +17,7 @@ export default async function AdminContactPage() {
       description="Business details, social links, form settings, and FAQs"
     >
       <AdminPageNotice />
-      <ContactSettingsForm />
+      <ContactSettingsForm settings={settings} />
     </AdminPageShell>
   );
 }

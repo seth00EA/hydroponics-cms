@@ -1,30 +1,50 @@
 "use client";
 
-import { AdminSaveBar } from "@/components/admin/AdminSaveBar";
-import { Button } from "@/components/ui/Button";
+import { useActionState } from "react";
+import { saveContactSettingsAction, type ContactActionState } from "@/app/admin/actions/contact";
 import { Card, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
-import { contactFaqs, contactInfo } from "@/data/contact";
+import type { ContactSettings } from "@/lib/contact";
 
-export function ContactSettingsForm() {
+const initialState: ContactActionState = {};
+
+export function ContactSettingsForm({ settings }: { settings: ContactSettings }) {
+  const [state, formAction, pending] = useActionState(saveContactSettingsAction, initialState);
+
+  const facebook = settings.info.socialLinks.find((link) => link.platform === "facebook")?.url ?? "";
+  const messenger = settings.info.socialLinks.find((link) => link.platform === "messenger")?.url ?? "";
+
+  const faqs = [...settings.faqs];
+  while (faqs.length < 5) {
+    faqs.push({ question: "", answer: "" });
+  }
+
   return (
-    <form className="space-y-6" onSubmit={(e) => e.preventDefault()}>
+    <form action={formAction} className="space-y-6">
+      {state.error && (
+        <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>
+      )}
+
+      {state.success && (
+        <p className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">{state.success}</p>
+      )}
+
       <Card>
         <CardTitle className="mb-4">Business information</CardTitle>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Input label="Email" name="email" type="email" defaultValue={contactInfo.email} />
-          <Input label="Phone" name="phone" type="tel" defaultValue={contactInfo.phone} />
+          <Input label="Email" name="email" type="email" defaultValue={settings.info.email} />
+          <Input label="Phone" name="phone" type="tel" defaultValue={settings.info.phone} />
           <Input
             label="Street address"
             name="address"
-            defaultValue={contactInfo.address}
+            defaultValue={settings.info.address}
             className="sm:col-span-2"
           />
           <Input
             label="Business hours"
             name="hours"
-            defaultValue={contactInfo.hours}
+            defaultValue={settings.info.hours}
             className="sm:col-span-2"
           />
         </div>
@@ -33,50 +53,29 @@ export function ContactSettingsForm() {
       <Card>
         <CardTitle className="mb-4">Social & messaging</CardTitle>
         <div className="space-y-4">
-          {contactInfo.socialLinks.map((link) => (
-            <Input
-              key={link.platform}
-              label={link.label}
-              name={link.platform}
-              type="url"
-              defaultValue={link.url}
-              placeholder="https://"
-            />
-          ))}
-        </div>
-      </Card>
-
-      <Card>
-        <CardTitle className="mb-4">Contact form settings</CardTitle>
-        <div className="space-y-4">
           <Input
-            label="Form heading"
-            name="formTitle"
-            defaultValue="Send a message"
+            label="Facebook Page"
+            name="facebook"
+            type="url"
+            defaultValue={facebook}
+            placeholder="https://facebook.com/your-page"
           />
-          <Textarea
-            label="Success message (after submit)"
-            name="successMessage"
-            rows={2}
-            defaultValue="Thanks for reaching out! We will reply within one business day."
+          <Input
+            label="Messenger Link"
+            name="messenger"
+            type="url"
+            defaultValue={messenger}
+            placeholder="https://m.me/your-page"
           />
-          <label className="flex items-center gap-2 text-sm text-foreground">
-            <input type="checkbox" defaultChecked className="rounded border-card-border" />
-            Show phone field on public form
-          </label>
-          <label className="flex items-center gap-2 text-sm text-foreground">
-            <input type="checkbox" defaultChecked className="rounded border-card-border" />
-            Enable FAQ section on contact page
-          </label>
         </div>
       </Card>
 
       <Card>
         <CardTitle className="mb-4">FAQs</CardTitle>
         <div className="space-y-4">
-          {contactFaqs.map((faq, i) => (
+          {faqs.map((faq, i) => (
             <div
-              key={faq.question}
+              key={i}
               className="rounded-lg border border-card-border p-4"
             >
               <p className="mb-3 text-xs font-semibold text-muted">FAQ {i + 1}</p>
@@ -90,13 +89,18 @@ export function ContactSettingsForm() {
               />
             </div>
           ))}
-          <Button type="button" variant="outline" size="sm" className="w-full sm:w-auto">
-            + Add FAQ
-          </Button>
         </div>
       </Card>
 
-      <AdminSaveBar saveLabel="Save contact settings" />
+      <div className="sticky bottom-4 rounded-2xl border bg-white p-4 shadow-lg">
+        <button
+          type="submit"
+          disabled={pending}
+          className="w-full rounded-xl bg-primary px-5 py-3 font-semibold text-white hover:opacity-90 disabled:opacity-60"
+        >
+          {pending ? "Saving..." : "Save contact settings"}
+        </button>
+      </div>
     </form>
   );
 }
