@@ -12,18 +12,20 @@ export const ROLE_LABELS: Record<UserRole, string> = {
   customer: "Customer",
 };
 
-/** Routes any admin role (owner + staff) may access */
+/** Routes owner + staff may access */
 export const ADMIN_ROUTES = [
   "/admin/dashboard",
   "/admin/homepage",
   "/admin/products",
   "/admin/gallery",
+  "/admin/orders",
 ] as const;
 
 /** Routes restricted to owner only */
 export const OWNER_ONLY_ROUTES = [
   "/admin/contact",
   "/admin/staff",
+  "/admin/users",
   "/admin/account",
 ] as const;
 
