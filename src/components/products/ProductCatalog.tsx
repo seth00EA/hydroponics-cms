@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { ProductFilters } from "@/components/products/ProductFilters";
 import { productCategories, productsPageContent } from "@/data/products";
@@ -17,16 +17,18 @@ type ProductCatalogProps = {
 export function ProductCatalog({ products }: ProductCatalogProps) {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
-  const [cartCount, setCartCount] = useState(0);
+    const [cartCount, setCartCount] = useState(() =>
+        typeof window === "undefined"
+            ? 0
+            : getStoredCart().reduce((sum, item) => sum + item.quantity, 0),
+    );
 
   function refreshCartCount() {
     const count = getStoredCart().reduce((sum, item) => sum + item.quantity, 0);
     setCartCount(count);
   }
 
-  useEffect(() => {
-    refreshCartCount();
-  }, []);
+ 
 
   const categories = useMemo(() => {
     const fromData = [...new Set(products.map((p) => p.category))].sort();

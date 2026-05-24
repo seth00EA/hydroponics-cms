@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   getStoredCart,
   removeFromCart,
@@ -10,15 +10,15 @@ import {
 } from "@/lib/cart";
 
 export default function CartPage() {
-  const [cartItems, setCartItems] = useState<StoredCartItem[]>([]);
+    const [cartItems, setCartItems] = useState<StoredCartItem[]>(() =>
+        typeof window === "undefined" ? [] : getStoredCart(),
+    );
 
   function refreshCart() {
     setCartItems(getStoredCart());
   }
 
-  useEffect(() => {
-    refreshCart();
-  }, []);
+
 
   const total = useMemo(
     () => cartItems.reduce((sum, item) => sum + item.unit_price * item.quantity, 0),
@@ -65,10 +65,10 @@ export default function CartPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900">{item.product_name}</h3>
                     <p className="text-sm text-gray-500">
-                      Unit price: ?{item.unit_price}
+                      Unit price: PHP {item.unit_price.toFixed(2)}
                     </p>
                     <p className="text-sm font-semibold text-green-700">
-                      Subtotal: ?{item.unit_price * item.quantity}
+                     Subtotal: PHP {(item.unit_price * item.quantity).toFixed(2)}
                     </p>
                   </div>
 
@@ -102,7 +102,7 @@ export default function CartPage() {
           <div className="mt-8 rounded-2xl border bg-green-50 p-6">
             <div className="flex justify-between text-xl font-bold">
               <span>Total</span>
-              <span>?{total}</span>
+             <span>PHP {total.toFixed(2)}</span>
             </div>
 
             <Link
