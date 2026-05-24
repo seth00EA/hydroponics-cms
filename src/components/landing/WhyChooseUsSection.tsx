@@ -2,20 +2,20 @@ import { FeatureIcon } from "@/components/landing/FeatureIcon";
 import { SectionHeading } from "@/components/landing/SectionHeading";
 import { Card } from "@/components/ui/Card";
 import { Container } from "@/components/ui/Container";
-import { homepageContent } from "@/data/homepage";
+import type { HomepageContent } from "@/types";
 
-export function WhyChooseUsSection() {
+export function WhyChooseUsSection({ content }: { content: HomepageContent }) {
   return (
     <section id="why-us" className="bg-background py-14 sm:py-20">
       <Container>
         <SectionHeading
-          title={homepageContent.whyChooseTitle}
-          subtitle={homepageContent.whyChooseSubtitle}
+          title={content.whyChooseTitle}
+          subtitle={content.whyChooseSubtitle}
           align="center"
           className="mx-auto"
         />
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {homepageContent.whyChooseFeatures.map((feature) => (
+          {content.whyChooseFeatures.map((feature) => (
             <Card
               key={feature.title}
               className="flex flex-col transition-shadow hover:shadow-md"
@@ -34,3 +34,4 @@ export function WhyChooseUsSection() {
     </section>
   );
 }
+

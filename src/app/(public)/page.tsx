@@ -4,19 +4,21 @@ import { GalleryPreviewSection } from "@/components/landing/GalleryPreviewSectio
 import { HeroSection } from "@/components/landing/HeroSection";
 import { ProcessSection } from "@/components/landing/ProcessSection";
 import { WhyChooseUsSection } from "@/components/landing/WhyChooseUsSection";
+import { getHomepageContent } from "@/lib/homepage";
 import { getFeaturedProducts } from "@/lib/products/get-products";
 
 export default async function HomePage() {
   const featuredProducts = await getFeaturedProducts(3);
+  const homepage = await getHomepageContent();
 
   return (
     <>
-      <HeroSection />
-      <ProcessSection />
+      <HeroSection content={homepage} />
+      <ProcessSection content={homepage} />
       <FeaturedProductsSection products={featuredProducts} />
-      <WhyChooseUsSection />
+      <WhyChooseUsSection content={homepage} />
       <GalleryPreviewSection />
-      <ContactCtaSection />
+      <ContactCtaSection content={homepage} />
     </>
   );
 }

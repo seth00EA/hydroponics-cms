@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { contactInfo } from "@/data/contact";
-import { homepageContent } from "@/data/homepage";
+import type { HomepageContent } from "@/types";
 
-export function ContactCtaSection() {
+export function ContactCtaSection({ content }: { content: HomepageContent }) {
   return (
     <section id="contact-cta" className="py-14 sm:py-20">
       <Container>
@@ -14,14 +14,14 @@ export function ContactCtaSection() {
           />
           <div className="relative max-w-2xl">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
-              {homepageContent.contactCtaTitle}
+              {content.contactCtaTitle}
             </h2>
             <p className="mt-4 text-lg text-primary-light/90">
-              {homepageContent.contactCtaSubtitle}
+              {content.contactCtaSubtitle}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <Button href="/contact" variant="secondary" size="lg">
-                {homepageContent.contactCtaPrimary}
+                {content.contactCtaPrimary}
               </Button>
               <Button
                 href="/products"
@@ -29,7 +29,7 @@ export function ContactCtaSection() {
                 size="lg"
                 className="border-white/35 bg-transparent text-white hover:bg-white/10"
               >
-                {homepageContent.contactCtaSecondary}
+                {content.contactCtaSecondary}
               </Button>
             </div>
             <p className="mt-8 text-sm text-primary-light/75">
@@ -47,3 +47,4 @@ export function ContactCtaSection() {
     </section>
   );
 }
+

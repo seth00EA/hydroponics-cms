@@ -1,10 +1,10 @@
 import Image from "next/image";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { homepageContent } from "@/data/homepage";
+import type { HomepageContent } from "@/types";
 import { siteConfig } from "@/data/site";
 
-export function HeroSection() {
+export function HeroSection({ content }: { content: HomepageContent }) {
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-primary via-primary-hover to-[#081c15] text-white">
       <div
@@ -22,14 +22,14 @@ export function HeroSection() {
               {siteConfig.tagline}
             </p>
             <h1 className="mt-5 text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-[3.25rem] lg:leading-[1.1]">
-              {homepageContent.heroTitle}
+              {content.heroTitle}
             </h1>
             <p className="mt-5 text-lg leading-relaxed text-primary-light/95 sm:text-xl">
-              {homepageContent.heroSubtitle}
+              {content.heroSubtitle}
             </p>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
               <Button href="/products" variant="secondary" size="lg">
-                {homepageContent.heroCta}
+                {content.heroCta}
               </Button>
               <Button
                 href="/contact"
@@ -37,7 +37,7 @@ export function HeroSection() {
                 size="lg"
                 className="border-white/35 bg-white/5 text-white hover:bg-white/15"
               >
-                {homepageContent.heroSecondaryCta}
+                {content.heroSecondaryCta}
               </Button>
             </div>
             <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-sm text-primary-light/80">
@@ -60,8 +60,8 @@ export function HeroSection() {
             <div className="overflow-hidden rounded-2xl border border-white/15 bg-white/5 shadow-2xl shadow-black/20 ring-1 ring-white/10 backdrop-blur-sm">
               <div className="relative aspect-[4/3] w-full sm:aspect-[16/11]">
                 <Image
-                  src={homepageContent.heroImage}
-                  alt={homepageContent.heroImageAlt}
+                  src={content.heroImage}
+                  alt={content.heroImageAlt}
                   fill
                   priority
                   className="object-cover"
@@ -79,3 +79,4 @@ export function HeroSection() {
     </section>
   );
 }
+
