@@ -3,12 +3,15 @@ import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { Section } from "@/components/ui/Section";
 import { galleryPageContent } from "@/data/gallery";
+import { getGalleryItems } from "@/lib/gallery";
 
 export const metadata = {
   title: "Gallery",
 };
 
-export default function GalleryPage() {
+export default async function GalleryPage() {
+  const items = await getGalleryItems();
+
   return (
     <Section className="py-10 sm:py-14">
       <Container>
@@ -16,7 +19,7 @@ export default function GalleryPage() {
           title={galleryPageContent.title}
           description={galleryPageContent.description}
         />
-        <GalleryCatalog />
+        <GalleryCatalog items={items} />
       </Container>
     </Section>
   );

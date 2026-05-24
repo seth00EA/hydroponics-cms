@@ -9,24 +9,25 @@ import {
   GalleryGrid,
   GalleryGroupedSections,
 } from "@/components/gallery/GalleryGrid";
-import { galleryItems, galleryPageContent } from "@/data/gallery";
+import { galleryPageContent } from "@/data/gallery";
 import {
   filterGalleryItems,
   groupGalleryByCategory,
 } from "@/lib/gallery-utils";
 import { Card } from "@/components/ui/Card";
+import type { GalleryItem } from "@/types";
 
-export function GalleryCatalog() {
+export function GalleryCatalog({ items }: { items: GalleryItem[] }) {
   const [filter, setFilter] = useState<GalleryFilter>("all");
 
   const filtered = useMemo(
-    () => filterGalleryItems(galleryItems, filter),
-    [filter],
+    () => filterGalleryItems(items, filter),
+    [items, filter],
   );
 
   const grouped = useMemo(
-    () => groupGalleryByCategory(galleryItems),
-    [],
+    () => groupGalleryByCategory(items),
+    [items],
   );
 
   return (
