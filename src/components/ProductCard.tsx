@@ -85,7 +85,10 @@ export function ProductCard({ product, className, onCartChange }: ProductCardPro
                 <div className="mt-4 border-t border-card-border pt-4">
                     <div className="flex items-center justify-between gap-2">
                         <p className="text-xl font-bold text-primary">
-                            PHP {product.price.toFixed(2)}
+                            PHP {Number(product.price).toLocaleString("en-PH", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}
                         </p>
 
                         {unavailable ? (

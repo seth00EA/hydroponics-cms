@@ -65,10 +65,16 @@ export default function CartPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900">{item.product_name}</h3>
                     <p className="text-sm text-gray-500">
-                      Unit price: PHP {item.unit_price.toFixed(2)}
+                                Unit price: PHP {Number(item.unit_price).toLocaleString("en-PH", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}
                     </p>
                     <p className="text-sm font-semibold text-green-700">
-                     Subtotal: PHP {(item.unit_price * item.quantity).toFixed(2)}
+                                Subtotal: PHP {Number(item.unit_price * item.quantity).toLocaleString("en-PH", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}
                     </p>
                   </div>
 
@@ -102,7 +108,10 @@ export default function CartPage() {
           <div className="mt-8 rounded-2xl border bg-green-50 p-6">
             <div className="flex justify-between text-xl font-bold">
               <span>Total</span>
-             <span>PHP {total.toFixed(2)}</span>
+                              <span> PHP {Number(total).toLocaleString("en-PH", {
+                                  minimumFractionDigits: 2,
+                                  maximumFractionDigits: 2,
+                              })} </span>
             </div>
 
             <Link

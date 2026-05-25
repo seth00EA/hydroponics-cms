@@ -90,7 +90,10 @@ export default async function AdminOrderDetailsPage({
                     <CardTitle>Payment & Status</CardTitle>
                     <div className="mt-4 space-y-3 text-sm">
                         <p><strong>Payment:</strong> {order.payment_method}</p>
-                        <p><strong>Total:</strong> PHP {Number(order.total_amount).toFixed(2)}</p>
+                        <p><strong>Total:</strong> PHP {Number(order.total_amount).toLocaleString("en-PH", {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        })}</p>
                         <p><strong>Status:</strong> <span className="capitalize">{order.status}</span></p>
 
                         {order.proof_of_payment_url ? (
@@ -132,8 +135,14 @@ export default async function AdminOrderDetailsPage({
                                 <tr key={item.id}>
                                     <td className="py-3 pr-4 font-medium">{item.product_name}</td>
                                     <td className="py-3 pr-4">{item.quantity}</td>
-                                    <td className="py-3 pr-4">PHP {Number(item.unit_price).toFixed(2)}</td>
-                                    <td className="py-3">PHP {Number(item.subtotal).toFixed(2)}</td>
+                                    <td className="py-3 pr-4"> PHP {Number(order.total_amount).toLocaleString("en-PH", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    })} </td>
+                                    <td className="py-3"> PHP {Number(order.total_amount).toLocaleString("en-PH", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    })} </td>
                                 </tr>
                             ))}
                         </tbody>
