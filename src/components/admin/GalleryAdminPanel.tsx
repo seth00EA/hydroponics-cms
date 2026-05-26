@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useActionState, useState } from "react";
+import { useFormStatus } from "react-dom";
 import {
   createGalleryItemAction,
   deleteGalleryItemAction,
@@ -25,6 +26,32 @@ const categories: { value: GalleryCategory; label: string }[] = [
 
 const initialState: GalleryActionState = {};
 
+function GalleryActionButton({
+    idleLabel,
+    loadingLabel,
+    className = "",
+    onClick,
+}: {
+    idleLabel: string;
+    loadingLabel: string;
+    className?: string;
+    onClick?: () => void;
+}) {
+    const { pending } = useFormStatus();
+
+    return (
+        <Button
+            type="submit"
+            size="sm"
+            disabled={pending}
+            className={className}
+            onClick={onClick}
+
+        >
+            {pending ? loadingLabel : idleLabel}
+        </Button>
+    );
+}
 export function GalleryAdminPanel({ items }: { items: GalleryItem[] }) {
   const [state, formAction, pending] = useActionState(createGalleryItemAction, initialState);
   const [category, setCategory] = useState<GalleryCategory>("farm");
@@ -175,28 +202,31 @@ export function GalleryAdminPanel({ items }: { items: GalleryItem[] }) {
                   </div>
                 </div>
 
-                <div className="flex flex-col gap-2">
-                  <Badge variant="outline">{galleryCategoryLabels[item.category]}</Badge>
-                  <Button type="submit" size="sm">
-                    Save
-                  </Button>
-                   <button
-                    type="submit"
-                      formAction={deleteGalleryItemAction.bind(null, item.id)}
-                      onClick={(e) => {
-                        const confirmed = window.confirm(
-                         "Delete this gallery image? This action cannot be undone.",
+                                  <div className="flex flex-col gap-2">
+                                      <Badge variant="outline">{galleryCategoryLabels[item.category]}</Badge>
+
+                                      <GalleryActionButton
+                                          idleLabel="Save"
+                                          loadingLabel="Saving..."
+                                      />
+
+                                      <button
+                                          type="submit"
+                                          formAction={deleteGalleryItemAction.bind(null, item.id)}
+                                          onClick={(e) => {
+                                              const confirmed = window.confirm(
+                                                  "Delete this gallery image? This action cannot be undone.",
                                               );
 
                                               if (!confirmed) {
                                                   e.preventDefault();
                                               }
                                           }}
-                    className="rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
-                  >
-                    Delete
-                  </button>
-                </div>
+                                          className="rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
+                                      >
+                                          Delete
+                                      </button>
+                                  </div>
               </div>
             </form>
             ))}

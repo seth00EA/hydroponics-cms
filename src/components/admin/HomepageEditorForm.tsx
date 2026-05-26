@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import { useActionState } from "react";
 import { saveHomepageAction, type HomepageActionState } from "@/app/admin/actions/homepage";
 import { Card, CardTitle } from "@/components/ui/Card";
@@ -31,7 +31,22 @@ export function HomepageEditorForm({ content }: { content: HomepageContent }) {
           <div className="grid gap-4 sm:grid-cols-2">
             <Input label="Primary CTA" name="heroCta" defaultValue={content.heroCta} />
             <Input label="Secondary CTA" name="heroSecondaryCta" defaultValue={content.heroSecondaryCta} />
-          </div>
+                  </div>
+                  <div>
+                      <p className="mb-2 text-sm font-medium text-foreground">
+                          Current hero image
+                      </p>
+
+                      <div className="relative h-56 overflow-hidden rounded-2xl border border-card-border bg-muted-bg">
+                          <Image
+                              src={content.heroImage}
+                              alt={content.heroImageAlt || "Homepage hero preview"}
+                              fill
+                              className="object-cover"
+                              unoptimized={content.heroImage.includes("supabase")}
+                          />
+                      </div>
+                  </div>
                   <FileUploadField
                       label="Hero image upload"
                       name="hero_image_file"
