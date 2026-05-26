@@ -10,13 +10,21 @@ export function Navbar() {
 
     return (
         <>
-            <header className="sticky top-0 z-50 border-b border-card-border bg-card/95 backdrop-blur">
+            <header className="sticky top-0 z-50 border-b border-card-border bg-card/90 backdrop-blur-md">
                 <nav className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-                    <Link href="/" className="flex items-center gap-2">
-                        <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-sm font-bold text-white">
-                            VR
+                    <Link href="/" className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-sm font-bold text-white shadow-md">
+                            NH
                         </span>
-                        <span className="font-semibold text-foreground">{siteConfig.name}</span>
+
+                        <div>
+                            <p className="font-semibold text-foreground">
+                                {siteConfig.name}
+                            </p>
+                            <p className="text-xs text-muted">
+                                Hydroponic Farm
+                            </p>
+                        </div>
                     </Link>
 
                     <ul className="hidden items-center gap-1 md:flex">
@@ -25,7 +33,7 @@ export function Navbar() {
                                 <Link
                                     href={link.href}
                                     className={cn(
-                                        "rounded-lg px-3 py-2 text-sm font-medium",
+                                        "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                                         pathname === link.href
                                             ? "bg-primary-light text-primary"
                                             : "text-muted hover:bg-muted-bg hover:text-foreground",

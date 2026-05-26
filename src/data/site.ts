@@ -1,11 +1,11 @@
 import type { NavLink } from "@/types";
 
 export const siteConfig = {
-  name: "Verdant Roots",
-  tagline: "Premium hydroponics for growers who care",
+  name: "Nolex Hydroponics",
+  tagline: "Fresh hydroponic produce grown with care",
   description:
-    "Sustainable hydroponic systems, nutrients, and expert guidance for home and commercial growers.",
-  copyright: `© ${new Date().getFullYear()} Verdant Roots. All rights reserved.`,
+    "Premium hydroponic vegetables, fresh produce, and expert hydroponic growing solutions.",
+  copyright: `© ${new Date().getFullYear()} Nolex Hydroponics. All rights reserved.`,
 };
 
 export const publicNavLinks: NavLink[] = [
@@ -17,7 +17,7 @@ export const publicNavLinks: NavLink[] = [
 
 export const adminNavLinks = [
   { label: "Dashboard", href: "/admin/dashboard", description: "Overview" },
-  { label: "Homepage", href: "/admin/homepage", description: "Hero & about" },
+  { label: "Homepage", href: "/admin/homepage", description: "Hero & branding" },
   { label: "Products", href: "/admin/products", description: "Catalog" },
   { label: "Orders", href: "/admin/orders", description: "Customer orders" },
   { label: "Gallery", href: "/admin/gallery", description: "Photos" },
