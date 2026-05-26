@@ -110,8 +110,18 @@ export function GalleryAdminPanel({ items }: { items: GalleryItem[] }) {
           <p className="text-sm text-muted">Edit sort order to reorder images.</p>
         </div>
 
-        <div className="space-y-4">
-          {items.map((item, index) => (
+              {items.length === 0 ? (
+                  <div className="rounded-2xl border border-dashed p-10 text-center">
+                      <h3 className="text-lg font-semibold text-foreground">
+                          No gallery images yet
+                      </h3>
+                      <p className="mt-2 text-sm text-muted">
+                          Upload your first farm, growth, or harvest photo to show it on the public gallery.
+                      </p>
+                  </div>
+              ) : (
+                  <div className="space-y-4">
+                      {items.map((item, index) => (
             <form
               key={item.id}
               action={updateGalleryItemAction.bind(null, item.id)}
@@ -180,9 +190,10 @@ export function GalleryAdminPanel({ items }: { items: GalleryItem[] }) {
                 </div>
               </div>
             </form>
-          ))}
-        </div>
-      </Card>
+            ))}
+             </div>
+              )}
+          </Card>
     </div>
   );
 }

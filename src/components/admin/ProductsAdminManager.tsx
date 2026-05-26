@@ -109,9 +109,12 @@ export function ProductsAdminManager({ products }: ProductsAdminManagerProps) {
                       </div>
                     </td>
                     <td className="px-4 py-3 text-muted">{product.category}</td>
-                    <td className="px-4 py-3 font-medium">
-                      ${product.price.toFixed(2)}
-                    </td>
+                        <td className="px-4 py-3 font-medium">
+                            PHP {Number(product.price).toLocaleString("en-PH", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}
+                        </td>
                     <td className="px-4 py-3">
                       <form action={updateStockFormAction} className="flex items-center gap-1">
                         <input type="hidden" name="productId" value={product.id} />
@@ -188,9 +191,23 @@ export function ProductsAdminManager({ products }: ProductsAdminManagerProps) {
               </tbody>
             </table>
           </div>
-          {filtered.length === 0 && (
-            <p className="px-4 py-8 text-center text-sm text-muted">No products found.</p>
-          )}
+                  {filtered.length === 0 && (
+                      <div className="px-6 py-12 text-center">
+                          <h3 className="text-lg font-semibold text-foreground">
+                              No products found
+                          </h3>
+                          <p className="mt-2 text-sm text-muted">
+                              Add your first hydroponic product to start selling.
+                          </p>
+                          <Button
+                              className="mt-5"
+                              size="sm"
+                              onClick={() => setEditing("new")}
+                          >
+                              Add first product
+                          </Button>
+                      </div>
+                  )}
         </Card>
         <p className="text-xs text-muted">
           Showing {filtered.length} of {products.length} products
