@@ -1,4 +1,4 @@
-import { AdminPageNotice, AdminPageShell } from "@/components/admin/AdminPageShell";
+import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { ProductsAdminManager } from "@/components/admin/ProductsAdminManager";
 import { getProducts } from "@/lib/products/get-products";
 
@@ -14,7 +14,7 @@ export default async function AdminProductsPage() {
       title="Products"
       description="Add, edit, and organize items in your public catalog"
     >
-      <AdminPageNotice />
+     
       <ProductsAdminManager products={products} />
     </AdminPageShell>
   );

@@ -1,4 +1,4 @@
-import { AdminPageNotice, AdminPageShell } from "@/components/admin/AdminPageShell";
+import { AdminPageShell } from "@/components/admin/AdminPageShell";
 import { GalleryAdminPanel } from "@/components/admin/GalleryAdminPanel";
 import { getGalleryItems } from "@/lib/gallery";
 
@@ -14,7 +14,7 @@ export default async function AdminGalleryPage() {
       title="Gallery"
       description="Upload images and manage farm, growth, and harvest photos"
     >
-      <AdminPageNotice />
+      
       <GalleryAdminPanel items={items} />
     </AdminPageShell>
   );
