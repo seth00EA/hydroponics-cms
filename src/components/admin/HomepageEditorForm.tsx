@@ -5,6 +5,7 @@ import { saveHomepageAction, type HomepageActionState } from "@/app/admin/action
 import { Card, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
+import { FileUploadField } from "@/components/admin/FileUploadField";
 import type { HomepageContent } from "@/types";
 
 const initialState: HomepageActionState = {};
@@ -31,7 +32,17 @@ export function HomepageEditorForm({ content }: { content: HomepageContent }) {
             <Input label="Primary CTA" name="heroCta" defaultValue={content.heroCta} />
             <Input label="Secondary CTA" name="heroSecondaryCta" defaultValue={content.heroSecondaryCta} />
           </div>
-          <Input label="Hero image URL" name="heroImage" defaultValue={content.heroImage} />
+                  <FileUploadField
+                      label="Hero image upload"
+                      name="hero_image_file"
+                      hint="Upload PNG, JPG, or WebP up to 5MB"
+                  />
+
+                  <Input
+                      label="Hero image URL fallback"
+                      name="heroImage"
+                      defaultValue={content.heroImage}
+                  />
           <Input label="Image alt text" name="heroImageAlt" defaultValue={content.heroImageAlt} />
         </div>
       </Card>

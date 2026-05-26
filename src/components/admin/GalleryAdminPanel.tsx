@@ -14,6 +14,7 @@ import { Card, CardTitle } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Textarea } from "@/components/ui/Textarea";
 import { galleryCategoryLabels } from "@/data/gallery";
+import { FileUploadField } from "@/components/admin/FileUploadField";
 import type { GalleryCategory, GalleryItem } from "@/types";
 
 const categories: { value: GalleryCategory; label: string }[] = [
@@ -49,7 +50,17 @@ export function GalleryAdminPanel({ items }: { items: GalleryItem[] }) {
             </p>
           )}
 
-          <Input label="Image URL" name="image_url" placeholder="/images/gallery-farm-1.svg" required />
+                  <FileUploadField
+                      label="Gallery image"
+                      name="image_file"
+                      hint="Upload PNG, JPG, or WebP up to 5MB"
+                  />
+
+                  <Input
+                      label="Image URL fallback"
+                      name="image_url"
+                      placeholder="/images/gallery-farm-1.svg or https://..."
+                  />
           <Input label="Title" name="title" placeholder="e.g. Morning harvest" required />
           <Textarea
             label="Description"
@@ -113,7 +124,15 @@ export function GalleryAdminPanel({ items }: { items: GalleryItem[] }) {
 
                 <div className="grid gap-3 md:grid-cols-2">
                   <Input label="Title" name="title" defaultValue={item.title} />
-                  <Input label="Image URL" name="image_url" defaultValue={item.image} />
+                          <div className="md:col-span-2">
+                              <FileUploadField
+                                  label="Replace image"
+                                  name="image_file"
+                                  hint="Leave empty to keep current image"
+                              />
+                          </div>
+
+                          <Input label="Image URL" name="image_url" defaultValue={item.image} />
                   <Textarea
                     label="Description"
                     name="description"

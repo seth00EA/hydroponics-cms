@@ -12,6 +12,8 @@ export type HomepageActionState = {
   success?: string;
 };
 
+const IMAGE_BUCKET = "cms-images";
+
 function parseProcessSteps(formData: FormData): HomepageContent["processSteps"] {
   return homepageContent.processSteps.map((step) => ({
     step: step.step,
@@ -28,6 +30,43 @@ function parseWhyChooseFeatures(formData: FormData): HomepageContent["whyChooseF
   }));
 }
 
+function getFileExtension(file: File) {
+  const name = file.name || "image";
+  return name.split(".").pop() || "jpg";
+}
+
+async function uploadHomepageImage(admin: any, file: FormDataEntryValue | null) {
+  if (!(file instanceof File) || file.size === 0) {
+    return null;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    throw new Error("Only image files are allowed.");
+  }
+
+  if (file.size > 5 * 1024 * 1024) {
+    throw new Error("Image must be 5MB or smaller.");
+  }
+
+  const extension = getFileExtension(file);
+  const filePath = `homepage/${Date.now()}-${crypto.randomUUID()}.${extension}`;
+
+  const { error } = await admin.storage
+    .from(IMAGE_BUCKET)
+    .upload(filePath, file, {
+      contentType: file.type,
+      upsert: false,
+    });
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  const { data } = admin.storage.from(IMAGE_BUCKET).getPublicUrl(filePath);
+
+  return data.publicUrl as string;
+}
+
 export async function saveHomepageAction(
   _prev: HomepageActionState,
   formData: FormData,
@@ -41,13 +80,22 @@ export async function saveHomepageAction(
   const admin = createAdminClient() as any;
   if (!admin) return { error: "Service role key required." };
 
+  let heroImage = String(formData.get("heroImage") ?? homepageContent.heroImage);
+
+  try {
+    const uploadedHeroImage = await uploadHomepageImage(admin, formData.get("hero_image_file"));
+    if (uploadedHeroImage) heroImage = uploadedHeroImage;
+  } catch (error) {
+    return { error: error instanceof Error ? error.message : "Hero image upload failed." };
+  }
+
   const content: HomepageContent = {
     ...homepageContent,
     heroTitle: String(formData.get("heroTitle") ?? homepageContent.heroTitle),
     heroSubtitle: String(formData.get("heroSubtitle") ?? homepageContent.heroSubtitle),
     heroCta: String(formData.get("heroCta") ?? homepageContent.heroCta),
     heroSecondaryCta: String(formData.get("heroSecondaryCta") ?? homepageContent.heroSecondaryCta),
-    heroImage: String(formData.get("heroImage") ?? homepageContent.heroImage),
+    heroImage,
     heroImageAlt: String(formData.get("heroImageAlt") ?? homepageContent.heroImageAlt),
 
     processTitle: String(formData.get("processTitle") ?? homepageContent.processTitle),
