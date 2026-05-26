@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
+import { useFormStatus } from "react-dom";
 import {
   deleteProductFormAction,
   updateStockFormAction,
@@ -20,6 +21,30 @@ import type { Product } from "@/types";
 type ProductsAdminManagerProps = {
   products: Product[];
 };
+
+function ActionButton({
+    idleLabel,
+    loadingLabel,
+    className = "",
+}: {
+    idleLabel: string;
+    loadingLabel: string;
+    className?: string;
+}) {
+    const { pending } = useFormStatus();
+
+    return (
+        <Button
+            type="submit"
+            variant="ghost"
+            size="sm"
+            disabled={pending}
+            className={className}
+        >
+            {pending ? loadingLabel : idleLabel}
+        </Button>
+    );
+}
 
 export function ProductsAdminManager({ products }: ProductsAdminManagerProps) {
   const router = useRouter();
@@ -125,9 +150,10 @@ export function ProductsAdminManager({ products }: ProductsAdminManagerProps) {
                           defaultValue={product.stock_quantity}
                           className="w-16 rounded border border-card-border px-2 py-1 text-sm"
                         />
-                        <Button type="submit" variant="ghost" size="sm">
-                          Save
-                        </Button>
+                                <ActionButton
+                                    idleLabel="Save"
+                                    loadingLabel="Saving..."
+                                />
                       </form>
                     </td>
                     <td className="px-4 py-3">
@@ -140,9 +166,10 @@ export function ProductsAdminManager({ products }: ProductsAdminManagerProps) {
                             name="is_available"
                             value={String(!product.is_available)}
                           />
-                          <Button type="submit" variant="ghost" size="sm">
-                            {product.is_available ? "Mark unavailable" : "Mark available"}
-                          </Button>
+                           <ActionButton
+                             idleLabel={product.is_available ? "Mark unavailable" : "Mark available"}
+                          loadingLabel="Updating..."
+                           />
                         </form>
                       </div>
                     </td>
@@ -159,9 +186,10 @@ export function ProductsAdminManager({ products }: ProductsAdminManagerProps) {
                         ) : (
                           <span className="text-muted">—</span>
                         )}
-                        <Button type="submit" variant="ghost" size="sm">
-                          {product.is_featured ? "Unfeature" : "Feature"}
-                        </Button>
+                                <ActionButton
+                                    idleLabel={product.is_featured ? "Unfeature" : "Feature"}
+                                    loadingLabel="Updating..."
+                                />
                       </form>
                     </td>
                     <td className="px-4 py-3">
@@ -186,14 +214,11 @@ export function ProductsAdminManager({ products }: ProductsAdminManagerProps) {
                                     }}
                                 >
                           <input type="hidden" name="productId" value={product.id} />
-                          <Button
-                            type="submit"
-                            variant="ghost"
-                            size="sm"
-                            className="text-red-600"
-                          >
-                            Delete
-                          </Button>
+                                    <ActionButton
+                                        idleLabel="Delete"
+                                        loadingLabel="Deleting..."
+                                        className="text-red-600"
+                                    />
                         </form>
                       </div>
                     </td>
