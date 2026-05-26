@@ -180,9 +180,18 @@ export function GalleryAdminPanel({ items }: { items: GalleryItem[] }) {
                   <Button type="submit" size="sm">
                     Save
                   </Button>
-                  <button
+                   <button
                     type="submit"
-                    formAction={deleteGalleryItemAction.bind(null, item.id)}
+                      formAction={deleteGalleryItemAction.bind(null, item.id)}
+                      onClick={(e) => {
+                        const confirmed = window.confirm(
+                         "Delete this gallery image? This action cannot be undone.",
+                                              );
+
+                                              if (!confirmed) {
+                                                  e.preventDefault();
+                                              }
+                                          }}
                     className="rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50"
                   >
                     Delete

@@ -173,7 +173,18 @@ export function ProductsAdminManager({ products }: ProductsAdminManagerProps) {
                         >
                           Edit
                         </Button>
-                        <form action={deleteProductFormAction}>
+                                <form
+                                    action={deleteProductFormAction}
+                                    onSubmit={(e) => {
+                                        const confirmed = window.confirm(
+                                            "Are you sure you want to delete this product? This cannot be undone.",
+                                        );
+
+                                        if (!confirmed) {
+                                            e.preventDefault();
+                                        }
+                                    }}
+                                >
                           <input type="hidden" name="productId" value={product.id} />
                           <Button
                             type="submit"
