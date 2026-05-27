@@ -5,8 +5,13 @@ import type { HomepageContent } from "@/types";
 import { siteConfig } from "@/data/site";
 
 export function HeroSection({ content }: { content: HomepageContent }) {
-    const hasBackground = Boolean(content.backgroundImage);
-    const hasLogo = Boolean(content.logoImage);
+    const hasBackground =
+        typeof content.backgroundImage === "string" &&
+        content.backgroundImage.startsWith("http");
+
+    const hasLogo =
+        typeof content.logoImage === "string" &&
+        content.logoImage.startsWith("http");
     const overlayOpacity =
         typeof content.overlayOpacity === "number" ? content.overlayOpacity : 0.45;
 
