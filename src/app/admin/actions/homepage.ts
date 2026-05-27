@@ -36,25 +36,31 @@ function getFileExtension(file: File) {
 }
 
 async function uploadHomepageImage(admin: any, file: FormDataEntryValue | null) {
-  if (!(file instanceof File) || file.size === 0) {
+  if (!file || typeof file === "string") {
     return null;
   }
 
-  if (!file.type.startsWith("image/")) {
+  const uploadedFile = file as File;
+
+  if (!uploadedFile.name || uploadedFile.size === 0) {
+    return null;
+  }
+
+  if (!uploadedFile.type.startsWith("image/")) {
     throw new Error("Only image files are allowed.");
   }
 
-  if (file.size > 5 * 1024 * 1024) {
+  if (uploadedFile.size > 5 * 1024 * 1024) {
     throw new Error("Image must be 5MB or smaller.");
   }
 
-  const extension = getFileExtension(file);
+  const extension = getFileExtension(uploadedFile);
   const filePath = `homepage/${Date.now()}-${crypto.randomUUID()}.${extension}`;
 
   const { error } = await admin.storage
     .from(IMAGE_BUCKET)
-    .upload(filePath, file, {
-      contentType: file.type,
+    .upload(filePath, uploadedFile, {
+      contentType: uploadedFile.type,
       upsert: false,
     });
 
@@ -62,7 +68,9 @@ async function uploadHomepageImage(admin: any, file: FormDataEntryValue | null) 
     throw new Error(error.message);
   }
 
-  const { data } = admin.storage.from(IMAGE_BUCKET).getPublicUrl(filePath);
+  const { data } = admin.storage
+    .from(IMAGE_BUCKET)
+    .getPublicUrl(filePath);
 
   return data.publicUrl as string;
 }
