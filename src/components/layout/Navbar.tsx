@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { publicNavLinks, siteConfig } from "@/data/site";
 import { cn } from "@/lib/cn";
-import Image from "next/image";
+
 
 export function Navbar({ logoImage }: { logoImage?: string }) {
     const pathname = usePathname();
@@ -16,12 +16,10 @@ export function Navbar({ logoImage }: { logoImage?: string }) {
                     <Link href="/" className="flex items-center gap-3">
                         <span className="relative flex h-10 w-10 items-center justify-center overflow-hidden rounded-xl bg-primary text-sm font-bold text-white shadow-md">
                             {logoImage ? (
-                                <Image
+                                <img
                                     src={logoImage}
                                     alt={`${siteConfig.name} logo`}
-                                    fill
-                                    className="object-contain p-1"
-                                    unoptimized={logoImage.includes("supabase")}
+                                    className="h-full w-full object-contain p-1"
                                 />
                             ) : (
                                 "NH"
