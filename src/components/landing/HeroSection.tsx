@@ -46,12 +46,10 @@ export function HeroSection({ content }: { content: HomepageContent }) {
                         {hasLogo && (
                             <div className="mb-5 flex items-center gap-3">
                                 <div className="relative h-14 w-14 overflow-hidden rounded-2xl bg-white/90 p-2">
-                                    <Image
+                                    <img
                                         src={content.logoImage}
                                         alt={`${siteConfig.name} logo`}
-                                        fill
-                                        className="object-contain p-1"
-                                        unoptimized={content.logoImage.includes("supabase")}
+                                        className="h-full w-full object-contain p-1"
                                     />
                                 </div>
                                 <div>
