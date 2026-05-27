@@ -58,6 +58,39 @@ export function HomepageEditorForm({ content }: { content: HomepageContent }) {
                       name="heroImage"
                       defaultValue={content.heroImage}
                   />
+                  <FileUploadField
+                      label="Logo image upload"
+                      name="logo_image_file"
+                      hint="Upload logo image PNG, JPG, or WebP"
+                  />
+
+                  <Input
+                      label="Logo image URL fallback"
+                      name="logoImage"
+                      defaultValue={content.logoImage}
+                  />
+
+                  <FileUploadField
+                      label="Homepage background image upload"
+                      name="background_image_file"
+                      hint="Upload homepage background image"
+                  />
+
+                  <Input
+                      label="Background image URL fallback"
+                      name="backgroundImage"
+                      defaultValue={content.backgroundImage}
+                  />
+
+                  <Input
+                      label="Background overlay opacity"
+                      name="overlayOpacity"
+                      type="number"
+                      step="0.05"
+                      min="0"
+                      max="1"
+                      defaultValue={content.overlayOpacity}
+                  />
           <Input label="Image alt text" name="heroImageAlt" defaultValue={content.heroImageAlt} />
         </div>
       </Card>

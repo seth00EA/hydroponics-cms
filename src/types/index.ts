@@ -61,6 +61,9 @@ export type HomepageContent = {
   heroSecondaryCta: string;
   heroImage: string;
   heroImageAlt: string;
+  logoImage: string;
+  backgroundImage: string;
+  overlayOpacity: number;
   processTitle: string;
   processSubtitle: string;
   processSteps: ProcessStep[];

@@ -81,13 +81,34 @@ export async function saveHomepageAction(
   if (!admin) return { error: "Service role key required." };
 
   let heroImage = String(formData.get("heroImage") ?? homepageContent.heroImage);
+let logoImage = String(formData.get("logoImage") ?? homepageContent.logoImage ?? "");
+let backgroundImage = String(
+  formData.get("backgroundImage") ?? homepageContent.backgroundImage ?? "",
+);
 
-  try {
-    const uploadedHeroImage = await uploadHomepageImage(admin, formData.get("hero_image_file"));
-    if (uploadedHeroImage) heroImage = uploadedHeroImage;
-  } catch (error) {
-    return { error: error instanceof Error ? error.message : "Hero image upload failed." };
-  }
+try {
+  const uploadedHeroImage = await uploadHomepageImage(
+    admin,
+    formData.get("hero_image_file"),
+  );
+  if (uploadedHeroImage) heroImage = uploadedHeroImage;
+
+  const uploadedLogoImage = await uploadHomepageImage(
+    admin,
+    formData.get("logo_image_file"),
+  );
+  if (uploadedLogoImage) logoImage = uploadedLogoImage;
+
+  const uploadedBackgroundImage = await uploadHomepageImage(
+    admin,
+    formData.get("background_image_file"),
+  );
+  if (uploadedBackgroundImage) backgroundImage = uploadedBackgroundImage;
+} catch (error) {
+  return {
+    error: error instanceof Error ? error.message : "Image upload failed.",
+  };
+}
 
   const content: HomepageContent = {
     ...homepageContent,
@@ -97,6 +118,9 @@ export async function saveHomepageAction(
     heroSecondaryCta: String(formData.get("heroSecondaryCta") ?? homepageContent.heroSecondaryCta),
     heroImage,
     heroImageAlt: String(formData.get("heroImageAlt") ?? homepageContent.heroImageAlt),
+    logoImage,
+    backgroundImage,
+    overlayOpacity: Number(formData.get("overlayOpacity") ?? homepageContent.overlayOpacity ?? 0.45),
 
     processTitle: String(formData.get("processTitle") ?? homepageContent.processTitle),
     processSubtitle: String(formData.get("processSubtitle") ?? homepageContent.processSubtitle),

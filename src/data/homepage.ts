@@ -9,6 +9,9 @@ export const homepageContent: HomepageContent = {
   heroImage: "/images/hero-greenhouse.svg",
   heroImageAlt: "Plants growing in a modern hydroponic greenhouse",
 
+  logoImage: "",
+  backgroundImage: "",
+  overlayOpacity: 0.45,
   processTitle: "How hydroponics works",
   processSubtitle:
     "A simple, repeatable cycle—from reservoir to harvest—designed for consistent yields in any season.",
