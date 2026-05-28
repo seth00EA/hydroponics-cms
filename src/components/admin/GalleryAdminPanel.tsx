@@ -198,7 +198,15 @@ export function GalleryAdminPanel({ items }: { items: GalleryItem[] }) {
                       name="sort_order"
                       type="number"
                       defaultValue={String(index)}
-                    />
+                                          />
+                                          <label className="flex items-center gap-2 text-sm font-medium">
+                                              <input
+                                                  type="checkbox"
+                                                  name="is_featured"
+                                                  defaultChecked={item.is_featured}
+                                              />
+                                              Show on homepage featured gallery
+                                          </label>
                   </div>
                 </div>
 

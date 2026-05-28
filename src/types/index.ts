@@ -23,6 +23,7 @@ export type GalleryItem = {
   description: string;
   image: string;
   category: GalleryCategory;
+  is_featured?: boolean;
 };
 
 export type SocialPlatform = "facebook" | "messenger";

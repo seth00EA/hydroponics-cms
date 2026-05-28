@@ -74,6 +74,7 @@ export async function createGalleryItemAction(
   const imageUrlInput = String(formData.get("image_url") ?? "").trim();
   const category = cleanCategory(formData.get("category"));
   const sortOrder = Number(formData.get("sort_order") ?? 0);
+  const isFeatured = formData.get("is_featured") === "on";
 
   const admin = createAdminClient() as any;
   if (!admin) return { error: "Service role key required." };
@@ -97,6 +98,7 @@ export async function createGalleryItemAction(
     image_url: imageUrl,
     category,
     sort_order: Number.isFinite(sortOrder) ? sortOrder : 0,
+    is_featured: isFeatured,
   });
 
   if (error) return { error: error.message };
@@ -133,12 +135,14 @@ export async function updateGalleryItemAction(
       image_url: imageUrl,
       category: cleanCategory(formData.get("category")),
       sort_order: Number(formData.get("sort_order") ?? 0),
+      is_featured: formData.get("is_featured") === "on",
       updated_at: new Date().toISOString(),
     })
     .eq("id", id);
 
   revalidatePath("/gallery");
   revalidatePath("/admin/gallery");
+  revalidatePath("/");
 }
 
 export async function deleteGalleryItemAction(id: string): Promise<void> {

@@ -9,6 +9,7 @@ type GalleryRow = {
   image_url: string;
   category: GalleryCategory;
   sort_order: number | null;
+  is_featured: boolean;
 };
 
 function mapGalleryRow(row: GalleryRow): GalleryItem {
@@ -18,6 +19,7 @@ function mapGalleryRow(row: GalleryRow): GalleryItem {
     description: row.description ?? "",
     image: row.image_url,
     category: row.category,
+    is_featured: row.is_featured,
   };
 }
 
@@ -30,7 +32,7 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
 
   const { data, error } = await admin
     .from("gallery_items")
-    .select("id, title, description, image_url, category, sort_order")
+    .select("id, title, description, image_url, category, sort_order, is_featured")
     .order("sort_order", { ascending: true })
     .order("created_at", { ascending: false });
 
