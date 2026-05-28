@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { addToCart } from "@/lib/cart";
 import type { Product } from "@/types";
 import { AvailabilityBadge } from "@/components/products/AvailabilityBadge";
@@ -17,6 +17,8 @@ type ProductCardProps = {
 
 export function ProductCard({ product, className, onCartChange }: ProductCardProps) {
     const [quantity, setQuantity] = useState("1");
+    const [isAdding, setIsAdding] = useState(false);
+    const [addedSuccess, setAddedSuccess] = useState(false);
     const unavailable = !product.is_available || product.stock_quantity <= 0;
 
     const isRemoteImage =
@@ -29,18 +31,33 @@ export function ProductCard({ product, className, onCartChange }: ProductCardPro
         return Math.min(parsed, product.stock_quantity);
     }
 
-    function handleAddToCart() {
-        const safeQty = getSafeQuantity();
+    async function handleAddToCart() {
+        if (isAdding) return;
 
-        addToCart({
-            product_id: product.id,
-            product_name: product.name,
-            quantity: safeQty,
-            unit_price: product.price,
-        });
+        setIsAdding(true);
 
-        onCartChange?.();
-        alert(`${safeQty} ${product.name} added to cart`);
+        try {
+            const safeQty = getSafeQuantity();
+
+            await new Promise((resolve) => setTimeout(resolve, 700));
+
+            addToCart({
+                product_id: product.id,
+                product_name: product.name,
+                quantity: safeQty,
+                unit_price: product.price,
+            });
+
+            onCartChange?.();
+
+            setAddedSuccess(true);
+
+            setTimeout(() => {
+                setAddedSuccess(false);
+            }, 1800);
+        } finally {
+            setIsAdding(false);
+        }
     }
 
     return (
@@ -115,9 +132,21 @@ export function ProductCard({ product, className, onCartChange }: ProductCardPro
                             <button
                                 type="button"
                                 onClick={handleAddToCart}
-                                className="flex-1 rounded-lg bg-green-700 px-3 py-2 text-sm font-semibold text-white hover:bg-green-800"
+                                disabled={isAdding}
+                                className={cn(
+                                    "flex-1 rounded-lg px-3 py-2 text-sm font-semibold text-white transition-all",
+                                    isAdding
+                                        ? "cursor-not-allowed bg-green-500"
+                                        : addedSuccess
+                                            ? "bg-emerald-600"
+                                            : "bg-green-700 hover:bg-green-800",
+                                )}
                             >
-                                Add to Cart
+                                {isAdding
+                                    ? "Adding..."
+                                    : addedSuccess
+                                        ? "Added ✓"
+                                        : "Add to Cart"}
                             </button>
                         </div>
                     )}
