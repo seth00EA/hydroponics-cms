@@ -19,39 +19,47 @@ function safeRedirectPath(path: string | null) {
   return path;
 }
 
-export async function customerSignInAction(
-  _prev: CustomerAuthState,
+export async function customerGoogleSignInAction(
   formData: FormData,
-): Promise<CustomerAuthState> {
+): Promise<void> {
   if (!isSupabaseConfigured()) {
-    return { error: "Supabase is not configured." };
+    redirect("/login?error=supabase");
   }
 
-  const email = String(formData.get("email") ?? "").trim();
-  const password = String(formData.get("password") ?? "");
-  const redirectTo = safeRedirectPath(String(formData.get("redirect_to") ?? "/account"));
-
-  if (!email || !password) {
-    return { error: "Email and password are required." };
-  }
+  const redirectTo = safeRedirectPath(
+    String(formData.get("redirect_to") ?? "/account"),
+  );
 
   const supabase = await createServerSupabaseClient();
-  if (!supabase) return { error: "Could not connect to Supabase." };
 
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-
-  if (error) {
-    return { error: error.message };
+  if (!supabase) {
+    redirect("/login?error=supabase");
   }
 
-  redirect(redirectTo);
+  const baseUrl =
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    process.env.NEXT_PUBLIC_APP_URL ??
+    "http://localhost:3000";
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${baseUrl}/auth/callback?next=${encodeURIComponent(
+        redirectTo,
+      )}`,
+    },
+  });
+
+  if (error || !data.url) {
+    redirect("/login?error=google");
+  }
+
+  redirect(data.url);
 }
 
 export async function customerSignOutAction(): Promise<void> {
   const supabase = await createServerSupabaseClient();
+
   if (supabase) {
     await supabase.auth.signOut();
   }
