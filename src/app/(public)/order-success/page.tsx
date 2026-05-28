@@ -1,3 +1,4 @@
+import Script from "next/script";
 import Link from "next/link";
 
 export const metadata = {
@@ -46,6 +47,16 @@ export default function OrderSuccessPage() {
                     </Link>
                 </div>
             </div>
+            <Script id="clear-cart">
+                {`
+    try {
+      localStorage.removeItem("hydroponics_cart");
+    } catch (error) {
+      console.error(error);
+    }
+  `}
+            </Script>
         </main>
+
     );
 }

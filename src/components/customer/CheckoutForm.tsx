@@ -15,7 +15,7 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
             disabled={pending || disabled}
             className="w-full rounded-xl bg-green-700 px-5 py-3 font-semibold text-white hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-60"
         >
-            {pending ? "Submitting Order..." : "Submit Order"}
+            {pending ? "Processing Your Order..." : "Submit Order"}
         </button>
     );
 }
@@ -223,7 +223,13 @@ export default function CheckoutForm({
                 </div>
             )}
 
-            <SubmitButton disabled={cartIsEmpty} />
+            <div className="space-y-3">
+                <div className="rounded-xl bg-gray-50 px-4 py-3 text-xs text-gray-600">
+                    Please wait while your order is being processed. Do not refresh or close the page after submitting.
+                </div>
+
+                <SubmitButton disabled={cartIsEmpty} />
+            </div>
         </form>
     );
 }

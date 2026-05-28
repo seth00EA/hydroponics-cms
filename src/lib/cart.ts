@@ -61,3 +61,10 @@ export function updateCartQuantity(productId: string, quantity: number) {
   item.quantity = quantity;
   saveStoredCart(cart);
 }
+export function clearCartAndRedirect(path: string) {
+  clearStoredCart();
+
+  if (typeof window !== "undefined") {
+    window.location.href = path;
+  }
+}
