@@ -93,3 +93,16 @@ export type AdminNavLink = {
   href: string;
   description?: string;
 };
+
+export type PaymentSettings = {
+  cashOnDeliveryEnabled: boolean;
+  gcashEnabled: boolean;
+  bankTransferEnabled: boolean;
+  gcashName: string;
+  gcashNumber: string;
+  gcashQrUrl: string;
+  bankName: string;
+  bankAccountName: string;
+  bankAccountNumber: string;
+  bankInstructions: string;
+};
