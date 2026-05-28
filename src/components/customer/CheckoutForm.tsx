@@ -4,6 +4,7 @@ import { submitOrderAction } from "@/app/(public)/checkout/actions";
 import { getStoredCart } from "@/lib/cart";
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
+import type { PaymentSettings } from "@/types";
 
 function SubmitButton({ disabled }: { disabled: boolean }) {
     const { pending } = useFormStatus();
@@ -19,7 +20,11 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
     );
 }
 
-export default function CheckoutForm() {
+export default function CheckoutForm({
+    paymentSettings,
+}: {
+    paymentSettings: PaymentSettings;
+}) {
     const [paymentMethod, setPaymentMethod] = useState("Cash on delivery");
     const [storedCart] = useState(() =>
         typeof window === "undefined" ? [] : getStoredCart(),
@@ -115,19 +120,91 @@ export default function CheckoutForm() {
                     onChange={(e) => setPaymentMethod(e.target.value)}
                     className="mt-1 w-full rounded-lg border p-3"
                 >
-                    <option>Cash on delivery</option>
-                    <option>GCash</option>
-                    <option>Bank transfer</option>
+                    {paymentSettings.cashOnDeliveryEnabled && (
+                        <option>Cash on delivery</option>
+                    )}
+
+                    {paymentSettings.gcashEnabled && (
+                        <option>GCash</option>
+                    )}
+
+                    {paymentSettings.bankTransferEnabled && (
+                        <option>Bank transfer</option>
+                    )}
                 </select>
 
-                {paymentMethod === "Cash on delivery" ? (
+                {paymentMethod === "Cash on delivery" && (
                     <p className="mt-2 text-xs text-gray-500">
                         Payment will be collected upon delivery.
                     </p>
-                ) : (
-                    <p className="mt-2 text-xs text-gray-500">
-                        Please upload proof of payment after sending payment.
-                    </p>
+                )}
+
+                {paymentMethod === "GCash" && (
+                    <div className="mt-3 rounded-xl border bg-green-50 p-4">
+                        <p className="text-sm font-semibold text-green-800">GCash Payment</p>
+
+                        {paymentSettings.gcashName && (
+                            <p className="mt-1 text-sm text-green-700">
+                                Account Name: {paymentSettings.gcashName}
+                            </p>
+                        )}
+
+                        {paymentSettings.gcashNumber && (
+                            <p className="text-sm text-green-700">
+                                GCash Number: {paymentSettings.gcashNumber}
+                            </p>
+                        )}
+
+                        {paymentSettings.gcashQrUrl ? (
+                            <img
+                                src={paymentSettings.gcashQrUrl}
+                                alt="GCash QR code"
+                                className="mt-4 max-h-80 w-full rounded-lg bg-white object-contain p-3"
+                            />
+                        ) : (
+                            <p className="mt-2 text-sm text-green-700">
+                                GCash QR is not yet uploaded. Please contact the seller for payment details.
+                            </p>
+                        )}
+
+                        <p className="mt-3 text-xs text-green-700">
+                            After payment, upload your screenshot or receipt below.
+                        </p>
+                    </div>
+                )}
+
+                {paymentMethod === "Bank transfer" && (
+                    <div className="mt-3 rounded-xl border bg-blue-50 p-4">
+                        <p className="text-sm font-semibold text-blue-800">Bank Transfer</p>
+
+                        {paymentSettings.bankName && (
+                            <p className="mt-1 text-sm text-blue-700">
+                                Bank: {paymentSettings.bankName}
+                            </p>
+                        )}
+
+                        {paymentSettings.bankAccountName && (
+                            <p className="text-sm text-blue-700">
+                                Account Name: {paymentSettings.bankAccountName}
+                            </p>
+                        )}
+
+                        {paymentSettings.bankAccountNumber && (
+                            <p className="text-sm text-blue-700">
+                                Account Number: {paymentSettings.bankAccountNumber}
+                            </p>
+                        )}
+
+                        {paymentSettings.bankInstructions && (
+                            <p className="mt-2 text-sm text-blue-700">
+                                {paymentSettings.bankInstructions}
+                            </p>
+                        )}
+
+                        <p className="mt-3 text-xs text-blue-700">
+                            After payment, upload your screenshot or receipt below.
+                        </p>
+                    </div>
                 )}
             </div>
 
