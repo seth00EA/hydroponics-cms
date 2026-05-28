@@ -64,9 +64,10 @@ async function uploadHomepageImage(admin: any, file: FormDataEntryValue | null) 
       upsert: false,
     });
 
-  if (error) {
-    throw new Error(error.message);
-  }
+    if (error) {
+      console.error("UPLOAD ERROR:", error);
+      throw new Error(`Upload failed: ${error.message}`);
+    }
 
   const { data } = admin.storage
     .from(IMAGE_BUCKET)
@@ -88,12 +89,28 @@ export async function saveHomepageAction(
   const admin = createAdminClient() as any;
   if (!admin) return { error: "Service role key required." };
 
-  let heroImage = String(formData.get("heroImage") ?? homepageContent.heroImage);
-let logoImage = String(formData.get("logoImage") ?? homepageContent.logoImage ?? "");
-let backgroundImage = String(
-  formData.get("backgroundImage") ?? homepageContent.backgroundImage ?? "",
-);
-
+  function cleanImageUrl(value: FormDataEntryValue | null, fallback = "") {
+    const url = String(value ?? "").trim();
+  
+    if (!url) return fallback;
+  
+    if (
+      url.startsWith("/") ||
+      url.startsWith("http://") ||
+      url.startsWith("https://")
+    ) {
+      return url;
+    }
+  
+    return fallback;
+  }
+  
+  let heroImage = cleanImageUrl(formData.get("heroImage"), homepageContent.heroImage);
+  let logoImage = cleanImageUrl(formData.get("logoImage"), homepageContent.logoImage ?? "");
+  let backgroundImage = cleanImageUrl(
+    formData.get("backgroundImage"),
+    homepageContent.backgroundImage ?? "",
+  );
 try {
   const uploadedHeroImage = await uploadHomepageImage(
     admin,
@@ -113,8 +130,13 @@ try {
   );
   if (uploadedBackgroundImage) backgroundImage = uploadedBackgroundImage;
 } catch (error) {
+  console.error("HOMEPAGE IMAGE ERROR:", error);
+
   return {
-    error: error instanceof Error ? error.message : "Image upload failed.",
+    error:
+      error instanceof Error
+        ? error.message
+        : "Homepage image upload failed.",
   };
 }
 

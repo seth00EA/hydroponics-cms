@@ -3,24 +3,31 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { HomepageContent } from "@/types";
 
 export async function getHomepageContent(): Promise<HomepageContent> {
-  const admin = createAdminClient() as any;
+  try {
+    const admin = createAdminClient();
 
-  if (!admin) {
+    if (!admin) {
+      return homepageContent;
+    }
+
+    const { data, error } = await admin
+  .from("homepage_settings")
+  .select("content")
+  .eq("id", "main")
+  .single();
+
+const row = data as { content?: Partial<HomepageContent> } | null;
+
+if (error || !row?.content || Object.keys(row.content).length === 0) {
+  return homepageContent;
+}
+
+return {
+  ...homepageContent,
+  ...row.content,
+};
+  } catch (error) {
+    console.error("Homepage CMS load failed:", error);
     return homepageContent;
   }
-
-  const { data } = await admin
-    .from("homepage_settings")
-    .select("content")
-    .eq("id", "main")
-    .single();
-
-  if (!data?.content || Object.keys(data.content).length === 0) {
-    return homepageContent;
-  }
-
-  return {
-    ...homepageContent,
-    ...(data.content as Partial<HomepageContent>),
-  };
 }
