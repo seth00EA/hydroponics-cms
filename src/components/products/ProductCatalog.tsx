@@ -52,26 +52,12 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
         />
 
         <Link
-          href="/cart"
-          className="shrink-0 rounded-xl bg-green-700 px-5 py-3 text-center font-semibold text-white hover:bg-green-800"
-        >
-                  <span className="flex items-center gap-2">
-                      <svg
-                          className="h-5 w-5"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                      >
-                          <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-1 5h12M10 21a1 1 0 100-2 1 1 0 000 2zm8 0a1 1 0 100-2 1 1 0 000 2z"
-                          />
-                      </svg>
-                      Cart ({cartCount})
-                 </span>
-        </Link>
+       href="/cart"
+  className="hidden shrink-0 rounded-xl bg-green-700 px-5 py-3 text-center font-semibold text-white hover:bg-green-800 sm:block"
+>
+  Cart ({cartCount})
+</Link>
+                  
       </div>
 
       <p className="text-sm text-muted">
@@ -107,7 +93,17 @@ export function ProductCatalog({ products }: ProductCatalogProps) {
             Reset filters
           </button>
         </Card>
-      )}
+    )
+    }
+    <Link
+        href="/cart"
+        className="fixed bottom-20 right-4 z-50 flex items-center gap-2 rounded-full bg-green-700 px-5 py-3 text-sm font-semibold text-white shadow-xl hover:bg-green-800 sm:bottom-6"
+    >
+        Cart
+        <span className="rounded-full bg-white px-2 py-0.5 text-xs font-bold text-green-700">
+            {cartCount}
+        </span>
+    </Link>
     </div>
   );
 }
