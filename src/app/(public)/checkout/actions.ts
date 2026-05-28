@@ -10,10 +10,16 @@ type CartItem = {
   quantity: number;
   unit_price: number;
 };
+export type CheckoutActionState = {
+  error?: string;
+};
 
-export async function submitOrderAction(formData: FormData): Promise<void> {
+export async function submitOrderAction(
+  _prev: CheckoutActionState | void,
+  formData: FormData,
+): Promise<CheckoutActionState | void> {
   const admin = createAdminClient() as any;
-  if (!admin) throw new Error("Supabase service role key is required.");
+  if (!admin) return { error: "Checkout service is currently unavailable." };
 
   const supabase = await createServerSupabaseClient();
   const {
@@ -26,10 +32,10 @@ export async function submitOrderAction(formData: FormData): Promise<void> {
 const phoneRegex = /^(09\d{9}|\+639\d{9})$/;
 
 if (!phoneRegex.test(phone)) {
-  throw new Error("Invalid Philippine phone number.");
+  return { error: "Please enter a valid Philippine phone number." };
 }
   if (!items.length) {
-    throw new Error("Cart is empty.");
+    return { error: "Your cart is empty." };
   }
 
   let totalAmount = 0;
@@ -41,10 +47,14 @@ if (!phoneRegex.test(phone)) {
       .eq("id", item.product_id)
       .single();
 
-    if (error || !product) throw new Error(`Product not found: ${item.product_name}`);
+    if (error || !product) return {
+      error: `${item.product_name} is no longer available.`,
+    };
 
     if (product.stock_quantity < item.quantity) {
-      throw new Error(`Not enough stock for ${product.name}.`);
+      return {
+        error: `Only limited stock is available for ${product.name}.`,
+      };
     }
 
     totalAmount += Number(product.price) * item.quantity;
@@ -66,7 +76,9 @@ if (!phoneRegex.test(phone)) {
     .select("id")
     .single();
 
-  if (orderError || !order) throw new Error(orderError?.message ?? "Failed to create order.");
+  if (orderError || !order) return {
+    error: "Unable to process your order right now. Please try again.",
+  };
 
   for (const item of items) {
     const { data: product } = await admin
@@ -75,7 +87,9 @@ if (!phoneRegex.test(phone)) {
       .eq("id", item.product_id)
       .single();
 
-    if (!product) throw new Error("Product missing during stock update.");
+    if (!product) return {
+      error: "A product became unavailable during checkout.",
+    };
 
     const subtotal = Number(product.price) * item.quantity;
 

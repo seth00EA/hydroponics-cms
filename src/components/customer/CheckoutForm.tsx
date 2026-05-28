@@ -1,9 +1,12 @@
 "use client";
 
-import { submitOrderAction } from "@/app/(public)/checkout/actions";
+import {
+    submitOrderAction,
+    type CheckoutActionState,
+} from "@/app/(public)/checkout/actions";
 import { getStoredCart } from "@/lib/cart";
 import { useState } from "react";
-import { useFormStatus } from "react-dom";
+import { useFormState, useFormStatus } from "react-dom";
 import type { PaymentSettings } from "@/types";
 
 function SubmitButton({ disabled }: { disabled: boolean }) {
@@ -19,7 +22,7 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
         </button>
     );
 }
-
+const initialState: CheckoutActionState = {};
 export default function CheckoutForm({
     paymentSettings,
 }: {
@@ -34,9 +37,13 @@ export default function CheckoutForm({
     const cartCount = storedCart.reduce((sum, item) => sum + item.quantity, 0);
 
     const cartIsEmpty = cartCount === 0;
+    const [state, formAction] = useFormState(
+        submitOrderAction,
+        initialState,
+    );
 
     return (
-        <form action={submitOrderAction} className="space-y-5 rounded-2xl border bg-white p-6 shadow-sm">
+        <form action={formAction} className="space-y-5 rounded-2xl border bg-white p-6 shadow-sm">
             <input type="hidden" name="cart_items" value={cartItems} />
 
             {cartIsEmpty && (
@@ -220,6 +227,11 @@ export default function CheckoutForm({
                     <p className="mt-2 text-xs text-gray-500">
                         Accepted format: image screenshot or receipt.
                     </p>
+                </div>
+            )}
+            {state?.error && (
+                <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                    {state.error}
                 </div>
             )}
 
