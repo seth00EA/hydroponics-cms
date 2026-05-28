@@ -21,7 +21,13 @@ export async function submitOrderAction(formData: FormData): Promise<void> {
   } = supabase ? await supabase.auth.getUser() : { data: { user: null } };
 
   const items = JSON.parse(String(formData.get("cart_items") ?? "[]")) as CartItem[];
+  const phone = String(formData.get("phone") ?? "").trim();
 
+const phoneRegex = /^(09\d{9}|\+639\d{9})$/;
+
+if (!phoneRegex.test(phone)) {
+  throw new Error("Invalid Philippine phone number.");
+}
   if (!items.length) {
     throw new Error("Cart is empty.");
   }
@@ -50,7 +56,7 @@ export async function submitOrderAction(formData: FormData): Promise<void> {
       customer_id: user?.id ?? null,
       customer_name: String(formData.get("full_name") ?? ""),
       customer_email: String(formData.get("email") ?? ""),
-      customer_phone: String(formData.get("phone") ?? ""),
+      customer_phone: phone,
       delivery_address: String(formData.get("delivery_address") ?? ""),
       order_notes: String(formData.get("order_notes") ?? ""),
       payment_method: String(formData.get("payment_method") ?? ""),

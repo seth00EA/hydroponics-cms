@@ -71,11 +71,17 @@ export default function CheckoutForm() {
                     <label className="text-sm font-medium">Phone</label>
                     <input
                         name="phone"
+                        type="tel"
                         required
-                        minLength={7}
-                        placeholder="09XXXXXXXXX"
+                        pattern="^(09\d{9}|\+639\d{9})$"
+                        placeholder="09XXXXXXXXX or +639XXXXXXXXX"
+                        title="Enter a valid Philippine phone number"
                         className="mt-1 w-full rounded-lg border p-3"
                     />
+
+                    <p className="mt-1 text-xs text-gray-500">
+                        Accepted format: 09XXXXXXXXX or +639XXXXXXXXX
+                    </p>
                 </div>
             </div>
 
